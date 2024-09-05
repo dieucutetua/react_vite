@@ -1,38 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import MyComponent from './components/learn/MyComponent'
-import { SecondComponent, ThirdComponent } from './components/learn/SecondComponent'
-
+import './components/todo/todo.css';
+import TodoData from './components/todo/TodoData';
+import TodoNew from './components/todo/TodoNew';
+import logo from './assets/react.svg'
+import { useState } from 'react';
+import Header from './components/layout/header';
+import Footer from './components/layout/footer';
+import { Outlet } from 'react-router-dom';
 
 const App = () => {
-  const [count, setCount] = useState(0)
+  const [todoList, setTodoList] = useState([
+    // { id: 1, name: "ltd" },
+    // { id: 2, name: "abc" }
+  ])
+  const addNewTodo = (name) => {
+    // alert(`call me ${name}`)
+    const newTodo = {
+      id: randomIntFromInterval(1, 1000000),
+      name: name
+    }
+    setTodoList([...todoList, newTodo])
+    //array.push
+  }
+  const deleteTodo = (id) => {
+    // console.log("s")
+    const newTodo = todoList.filter(item => item.id !== id)
+    setTodoList(newTodo);
+  }
+  const randomIntFromInterval = (min, max) => { // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+  // addNewTodo()
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <Header />
+      <div className="todo_container">
+        <div className="todo_title">Todo List</div>
+
+        <TodoNew
+          addNewTodo={addNewTodo} />
+        {todoList.length > 0 ?
+          <TodoData
+            todoList={todoList}
+            deleteTodo={deleteTodo}
+          />
+          :
+          <div className='todo_img'>
+            <img src={logo} className='logo' />
+          </div>}
+
+        {/* <TodoNew
+        addNewTodo={addNewTodo} />
+      {todoList != 0 &&
+        <TodoData
+          todoList={todoList}
+        />
+      }
+
+      {todoList.length === 0 &&
+        <div className='todo_img'>
+          <img src={logo} className='logo' />
+        </div>} */}
+
       </div>
-      <h1>hello</h1>
-      <MyComponent />
-      <SecondComponent />
-      <ThirdComponent />
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Outlet />
+      <Footer />
     </>
   )
 }
